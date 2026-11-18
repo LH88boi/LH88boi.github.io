@@ -27,10 +27,10 @@ h1 a.md-nav__link {
   border-bottom: none;
 }
 
-/* 2) 段首缩进：日记正文每个段落自动首行缩进 2 字（写作时无需手动加符号）*/
-.md-post__content.md-typeset > p,
-.md-content__inner.md-typeset > p {
-  text-indent: 2em;
+/* 2) 前台不显示文章标题（后台仍用开头文字自动填充标题，仅用于管理/文件元数据）*/
+.md-post__content.md-typeset > h2:first-child,
+.md-content__inner.md-typeset > h1:first-child {
+  display: none;
 }
 
 /* 3) 多篇日记之间用灰色长横线分隔 */
