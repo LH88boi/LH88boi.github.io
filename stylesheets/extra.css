@@ -1,12 +1,12 @@
-/* 天网日记：正文用与引用一致的浅灰，文章之间加灰色长横线 */
+/* 天网日记：正文深灰、文章间灰色横线、标题链接保持标题样式 */
 
-/* 1) 日记正文（列表卡片 + 文章页）文字改为浅灰，与引用块同色 */
+/* 1) 日记正文（列表卡片 + 文章页）文字：深一点的灰色 */
 .md-post__content.md-typeset,
 .md-content__inner.md-typeset {
-  color: var(--md-default-fg-color--light);
+  color: #555555;
 }
 
-/* 标题保持正常深色，不用跟着变浅 */
+/* 标题保持正常深色，不用跟着变灰 */
 .md-post__content.md-typeset h1,
 .md-post__content.md-typeset h2,
 .md-post__content.md-typeset h3,
@@ -19,7 +19,21 @@
   color: var(--md-default-fg-color);
 }
 
-/* 2) 多篇日记之间用灰色长横线分隔 */
+/* 页面顶部大标题「天网」本身是写作入口：去掉链接色和下划线，保持标题外观 */
+.md-content__inner > header.md-typeset > h1 a,
+h1 a.md-nav__link {
+  color: var(--md-default-fg-color) !important;
+  text-decoration: none;
+  border-bottom: none;
+}
+
+/* 2) 段首缩进：日记正文每个段落自动首行缩进 2 字（写作时无需手动加符号）*/
+.md-post__content.md-typeset > p,
+.md-content__inner.md-typeset > p {
+  text-indent: 2em;
+}
+
+/* 3) 多篇日记之间用灰色长横线分隔 */
 .md-post + .md-post {
   border-top: 1px solid var(--md-default-fg-color--lighter);
   margin-top: 2rem;
