@@ -6,30 +6,38 @@
     stage.dataset.bound = '1';
     var lens = document.getElementById('lens');
     var slot = document.getElementById('slot');
-    var badgeOn = false;
+    var line = document.querySelector('.line');
+    var wood = document.getElementById('wood');
 
-    function setBadge(on) {
-      if (badgeOn === on) return;
-      badgeOn = on;
-      stage.classList.toggle('badge-on', on);
-      lens.style.opacity = on ? '0' : '1';
-    }
-
+    // mx/my：反色镜；lx/ly：整行镂空；ex/ey + wx/wy/ww/wh：圆内木字
     stage.addEventListener('mousemove', function (e) {
+      var sr = slot.getBoundingClientRect();
+      var st = stage.getBoundingClientRect();
+      var lr = line.getBoundingClientRect();
+
       stage.style.setProperty('--mx', e.clientX + 'px');
       stage.style.setProperty('--my', e.clientY + 'px');
-      var r = slot.getBoundingClientRect();
-      var pad = 28;
-      var near = e.clientX >= r.left - pad && e.clientX <= r.right + pad &&
-                 e.clientY >= r.top - pad && e.clientY <= r.bottom + pad;
-      setBadge(near);
+      stage.style.setProperty('--wx', (sr.left - st.left) + 'px');
+      stage.style.setProperty('--wy', (sr.top - st.top) + 'px');
+      stage.style.setProperty('--ww', sr.width + 'px');
+      stage.style.setProperty('--wh', sr.height + 'px');
+      stage.style.setProperty('--ex', (e.clientX - sr.left) + 'px');
+      stage.style.setProperty('--ey', (e.clientY - sr.top) + 'px');
+      line.style.setProperty('--lx', (e.clientX - lr.left) + 'px');
+      line.style.setProperty('--ly', (e.clientY - lr.top) + 'px');
+      var pad = 40;
+      var near = e.clientX >= sr.left - pad && e.clientX <= sr.right + pad &&
+                 e.clientY >= sr.top - pad && e.clientY <= sr.bottom + pad;
+      stage.classList.toggle('near-slot', near);
     });
-    stage.addEventListener('mouseenter', function () {
-      if (!badgeOn) lens.style.opacity = '1';
-    });
+    stage.addEventListener('mouseenter', function () { lens.style.opacity = '1'; });
     stage.addEventListener('mouseleave', function () {
-      setBadge(false);
       lens.style.opacity = '0';
+      stage.classList.remove('near-slot');
+      stage.style.setProperty('--ex', '-9999px');
+      stage.style.setProperty('--ey', '-9999px');
+      line.style.setProperty('--lx', '-9999px');
+      line.style.setProperty('--ly', '-9999px');
     });
     slot.addEventListener('click', function () { location.href = '/about/'; });
   }
