@@ -25,6 +25,9 @@ plugins:
 extra_css:
   - stylesheets/extra.css
 
+extra_javascript:
+  - javascripts/home.js
+
 nav:
   - 主页: index.md
   - 天网: jottings/index.md
