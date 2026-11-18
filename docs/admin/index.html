@@ -154,7 +154,7 @@
 const OWNER = 'LH88boi';
 const REPO  = 'LH88boi.github.io';
 const BRANCH = 'main';
-const DIR = 'docs/jottings';
+const DIR = 'docs/jottings/posts';
 const API = 'https://api.github.com';
 
 let token = localStorage.getItem('dtm_gh_token') || '';
@@ -310,6 +310,8 @@ function parseArticle(text){
   if(!title){
     const h = body.match(/^#\s+(.+)$/m); if(h) title = h[1].trim();
   }
+  // 编辑时隐藏摘要分隔符，用户看到的是干净正文
+  body = body.replace(/<!--\s*more\s*-->/g,'').replace(/\n{3,}/g,'\n\n').trim();
   return {title,date,tags,body};
 }
 function buildArticle(){
@@ -319,7 +321,13 @@ function buildArticle(){
   const body = $('body').value;
   const tagLine = tags.length ? `tags: [${tags.map(t=>"'"+t.replace(/'/g,"")+"'").join(', ')}]\n` : '';
   const fm = `---\ntitle: '${title.replace(/'/g,"")}'\ndate: ${date}\n${tagLine}---\n\n`;
-  const content = fm + (body.trim() ? body.trim() : `# ${title}\n`) + '\n';
+  let text = body.trim() ? body.trim() : `# ${title}\n`;
+  // 在第一个空段落后插入摘要分隔符：首页显示摘要，点标题看全文
+  if(text.includes('\n\n')){
+    const cut = text.indexOf('\n\n');
+    text = text.slice(0, cut) + '\n\n<!-- more -->\n\n' + text.slice(cut + 2);
+  }
+  const content = fm + text + '\n';
   const name = date + '-' + (title.replace(/[\\/:*?"<>|\s]+/g,'-').slice(0,40) || 'diary') + '.md';
   return {name, content};
 }
@@ -339,11 +347,8 @@ async function savePost(){
     };
     if(editingFile && editingFile.sha) putBody.sha = editingFile.sha;
 
-    // 1) 保存文章
+    // 保存文章（列表由 blog 插件自动生成，无需手动维护）
     await gh(`/repos/${OWNER}/${REPO}/contents/${path}`, { method:'PUT', body:putBody });
-
-    // 2) 更新文章列表（若 index.md 含标记区）
-    await updateIndex();
 
     msg('已保存并发布！约 1～2 分钟后网站更新：<a href="/jottings/" target="_blank">去看看 ↗</a>','ok');
     await loadList();
@@ -393,7 +398,6 @@ async function delPost(encName){
       method:'DELETE',
       body:{ message:'删除日记：'+name, sha:f.sha, branch:BRANCH }
     });
-    await updateIndex();
     msg('已删除。','ok');
     await loadList();
   }catch(e){ msg('删除失败：'+e.message,'err'); }
