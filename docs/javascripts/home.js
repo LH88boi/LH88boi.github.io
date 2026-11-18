@@ -5,21 +5,31 @@
     if (!stage || stage.dataset.bound) return;
     stage.dataset.bound = '1';
     var lens = document.getElementById('lens');
-    var eye = document.getElementById('eye');
     var slot = document.getElementById('slot');
+    var badgeOn = false;
+
+    function setBadge(on) {
+      if (badgeOn === on) return;
+      badgeOn = on;
+      stage.classList.toggle('badge-on', on);
+      lens.style.opacity = on ? '0' : '1';
+    }
 
     stage.addEventListener('mousemove', function (e) {
       stage.style.setProperty('--mx', e.clientX + 'px');
       stage.style.setProperty('--my', e.clientY + 'px');
       var r = slot.getBoundingClientRect();
-      slot.style.setProperty('--ex', (e.clientX - r.left) + 'px');
-      slot.style.setProperty('--ey', (e.clientY - r.top) + 'px');
+      var pad = 28;
+      var near = e.clientX >= r.left - pad && e.clientX <= r.right + pad &&
+                 e.clientY >= r.top - pad && e.clientY <= r.bottom + pad;
+      setBadge(near);
     });
-    stage.addEventListener('mouseenter', function () { lens.style.opacity = '1'; });
+    stage.addEventListener('mouseenter', function () {
+      if (!badgeOn) lens.style.opacity = '1';
+    });
     stage.addEventListener('mouseleave', function () {
+      setBadge(false);
       lens.style.opacity = '0';
-      slot.style.setProperty('--ex', '-9999px');
-      slot.style.setProperty('--ey', '-9999px');
     });
     slot.addEventListener('click', function () { location.href = '/about/'; });
   }

@@ -45,22 +45,12 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
   color: #1a1a1a;
   user-select: none;
 }
-.slot{ position: relative; display: inline-block; cursor: pointer; --ex: -9999px; --ey: -9999px; }
-/* 平时显示：目（撑开尺寸）；鼠标小圆内把目隐去，好让上层的木露出来 */
-.eye{
-  position: relative; z-index: 1; color: #1a1a1a;
-  -webkit-mask-image: radial-gradient(circle var(--r) at var(--ex, -9999px) var(--ey, -9999px), transparent 99%, #000 100%);
-  mask-image: radial-gradient(circle var(--r) at var(--ex, -9999px) var(--ey, -9999px), transparent 99%, #000 100%);
-}
-/* 木叠在目之上，仅在镜片圆内裁切显示：圆内是木，圆外是目 */
-.wood{
-  position: absolute; inset: 0; z-index: 2;
-  color: #1a1a1a;
-  -webkit-clip-path: circle(var(--r) at var(--ex, -9999px) var(--ey, -9999px));
-  clip-path: circle(var(--r) at var(--ex, -9999px) var(--ey, -9999px));
-}
+.slot{ position: relative; display: inline-block; cursor: pointer; }
+.eye{ position: relative; z-index: 1; color: #1a1a1a; }
+.wood{ display: none; } /* 不再用裁切叠字，避免圆边出现白边 */
 .sub{ margin-top: 1.2rem; font-size: 1rem; color: #9aa0a6; letter-spacing: .05em; z-index: 2; }
-/* 跟随鼠标的唯一圆形反色镜：与镂空/裁切完全同半径同圆心 */
+
+/* 普通区域：跟随鼠标的圆形反色镜 */
 .lens{
   position: fixed; z-index: 9;
   left: var(--mx); top: var(--my);
@@ -73,11 +63,32 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
   opacity: 0;
   transition: opacity .15s;
 }
-@media (hover: none){ .lens{ display: none; } }
+
+/* 移到「目」附近：换成不透明的黑圆+白木，彻底盖掉边缘反色白线 */
+.badge{
+  position: fixed; z-index: 10;
+  left: var(--mx); top: var(--my);
+  width: calc(var(--r) * 2); height: calc(var(--r) * 2);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #000;
+  color: #e6e6e6;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(4rem, 13vw, 9rem);
+  font-weight: 800; line-height: 1.15; letter-spacing: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .15s;
+}
+.stage.badge-on .lens{ opacity: 0 !important; }
+.stage.badge-on .badge{ opacity: 1; }
+.stage.badge-on .eye{ opacity: 0; }
+@media (hover: none){ .lens, .badge{ display: none; } }
 </style>
 
 <div class="stage" id="stage">
   <div class="line">地下头<span class="slot" id="slot"><span class="wood">木</span><span class="eye" id="eye">目</span></span></div>
   <div class="sub">一处安静的角落，记录所见与所想。</div>
   <div class="lens" id="lens"></div>
+  <div class="badge" id="badge">木</div>
 </div>
