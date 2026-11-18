@@ -20,8 +20,12 @@ plugins:
       post_url_format: "{file}"
       pagination_per_page: 10
       pagination_keep_content: true
+      post_readtime: false
+
+extra_css:
+  - stylesheets/extra.css
 
 nav:
   - 主页: index.md
-  - 天网: jottings/index.md
+  - 天网: admin/index.html
   - 关于: about/index.md

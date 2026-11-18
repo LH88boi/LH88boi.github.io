@@ -1,0 +1,27 @@
+/* 天网日记：正文用与引用一致的浅灰，文章之间加灰色长横线 */
+
+/* 1) 日记正文（列表卡片 + 文章页）文字改为浅灰，与引用块同色 */
+.md-post__content.md-typeset,
+.md-content__inner.md-typeset {
+  color: var(--md-default-fg-color--light);
+}
+
+/* 标题保持正常深色，不用跟着变浅 */
+.md-post__content.md-typeset h1,
+.md-post__content.md-typeset h2,
+.md-post__content.md-typeset h3,
+.md-post__content.md-typeset h4,
+.md-post__content.md-typeset h5,
+.md-post__content.md-typeset h6,
+.md-content__inner.md-typeset h1,
+.md-content__inner.md-typeset h2,
+.md-content__inner.md-typeset h3 {
+  color: var(--md-default-fg-color);
+}
+
+/* 2) 多篇日记之间用灰色长横线分隔 */
+.md-post + .md-post {
+  border-top: 1px solid var(--md-default-fg-color--lighter);
+  margin-top: 2rem;
+  padding-top: 2rem;
+}
