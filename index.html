@@ -301,7 +301,6 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
 .stage{
   --mx: -9999px; --my: -9999px;          /* 鼠标视口坐标 */
   --r: 110px;                            /* 反色镜半径 */
-  --mask-r: 118px;                       /* 目字镂空半径略大，避开反色镜边缘白线 */
   position: relative;
   width: 100%; height: 100%;
   display: flex; flex-direction: column;
@@ -319,18 +318,10 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
   user-select: none;
 }
 .slot{ position: relative; display: inline-block; cursor: pointer; }
-/* 目字在稍大的圆内隐去，避免笔画正好落在反色镜边缘产生白线 */
 .eye{ position: relative; z-index: 1; color: #1a1a1a; }
-/* 只有靠近「目」时才镂空整行文字，避开反色镜边缘白线；其它地方保留原样反色 */
-.stage.near-slot .line{
-  -webkit-mask-image: radial-gradient(circle var(--mask-r) at var(--lx, -9999px) var(--ly, -9999px), transparent 99%, #000 100%);
-  mask-image: radial-gradient(circle var(--mask-r) at var(--lx, -9999px) var(--ly, -9999px), transparent 99%, #000 100%);
-}
-.stage.near-slot .eye{
-  -webkit-mask-image: radial-gradient(circle var(--mask-r) at var(--ex, -9999px) var(--ey, -9999px), transparent 99%, #000 100%);
-  mask-image: radial-gradient(circle var(--mask-r) at var(--ex, -9999px) var(--ey, -9999px), transparent 99%, #000 100%);
-}
-/* 木放在被镂空的整行文字之外，只在反色镜圆内裁切显示 */
+/* 靠近「目」时整个隐去目，避免它的笔画落在反色镜边缘产生白线；其它字照常被反色 */
+.stage.near-slot .eye{ opacity: 0; }
+/* 木放在镂空的目之外，只在反色镜圆内裁切显示 */
 .wood{
   position: absolute; z-index: 3;
   left: var(--wx, -9999px); top: var(--wy, -9999px);
