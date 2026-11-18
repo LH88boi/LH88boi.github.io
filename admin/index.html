@@ -315,33 +315,31 @@ function parseArticle(text){
   return {title,date,tags,body};
 }
 function buildArticle(){
-  const title = $('fTitle').value.trim() || '未命名日记';
   const date = $('fDate').value || today();
   const tags = $('fTags').value.split(/[,，]/).map(s=>s.trim()).filter(Boolean);
-  const body = $('body').value;
+  const rawBody = $('body').value.trim();
+  // 标题可留空：优先取正文第一行，再退回到日期
+  let title = $('fTitle').value.trim();
+  if(!title){
+    const first = rawBody.split('\n').map(s=>s.trim()).find(s=>s && !/^#{1,6}\s/.test(s) && s !== '<!-- more -->') || '';
+    title = first.replace(/[*_`>\[\]]/g,'').slice(0,30) || (date.slice(5).replace('-','月') + '日');
+  }
   const tagLine = tags.length ? `tags: [${tags.map(t=>"'"+t.replace(/'/g,"")+"'").join(', ')}]\n` : '';
   const fm = `---\ntitle: '${title.replace(/'/g,"")}'\ndate: ${date}\n${tagLine}---\n\n`;
-  let text = body.trim() ? body.trim() : `# ${title}\n`;
-  // 在第一个空段落后插入摘要分隔符：首页显示摘要，点标题看全文
-  if(text.includes('\n\n')){
-    const cut = text.indexOf('\n\n');
-    text = text.slice(0, cut) + '\n\n<!-- more -->\n\n' + text.slice(cut + 2);
-  }
+  const text = rawBody || `# ${title}\n`;
   const content = fm + text + '\n';
   const name = date + '-' + (title.replace(/[\\/:*?"<>|\s]+/g,'-').slice(0,40) || 'diary') + '.md';
   return {name, content};
 }
 
 async function savePost(){
-  const title = $('fTitle').value.trim();
-  if(!title){ msg('请填标题。','err'); return; }
   const btn = $('saveBtn');
   btn.innerHTML = '<span class="spinner"></span>保存中…'; btn.disabled=true;
   try{
     const art = buildArticle();
     const path = `${DIR}/${editingFile ? editingFile.name : art.name}`;
     const putBody = {
-      message: (editingFile ? '更新日记：' : '新增日记：') + title,
+      message: (editingFile ? '更新日记：' : '新增日记：') + $('fTitle').value.trim() + (editingFile ? '' : '（' + art.name.replace(/\.md$/,'') + '）'),
       content: toB64(art.content),
       branch: BRANCH
     };
