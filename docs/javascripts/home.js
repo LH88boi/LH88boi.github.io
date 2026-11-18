@@ -6,14 +6,11 @@
     stage.dataset.bound = '1';
     var lens = document.getElementById('lens');
     var slot = document.getElementById('slot');
-    var line = document.querySelector('.line');
-    var wood = document.getElementById('wood');
 
-    // mx/my：反色镜；lx/ly：整行镂空；ex/ey + wx/wy/ww/wh：圆内木字
+    // mx/my：反色镜；ex/ey + wx/wy/ww/wh：圆内木字
     stage.addEventListener('mousemove', function (e) {
       var sr = slot.getBoundingClientRect();
       var st = stage.getBoundingClientRect();
-      var lr = line.getBoundingClientRect();
 
       stage.style.setProperty('--mx', e.clientX + 'px');
       stage.style.setProperty('--my', e.clientY + 'px');
@@ -23,9 +20,7 @@
       stage.style.setProperty('--wh', sr.height + 'px');
       stage.style.setProperty('--ex', (e.clientX - sr.left) + 'px');
       stage.style.setProperty('--ey', (e.clientY - sr.top) + 'px');
-      line.style.setProperty('--lx', (e.clientX - lr.left) + 'px');
-      line.style.setProperty('--ly', (e.clientY - lr.top) + 'px');
-      var pad = 40;
+      var pad = 60;
       var near = e.clientX >= sr.left - pad && e.clientX <= sr.right + pad &&
                  e.clientY >= sr.top - pad && e.clientY <= sr.bottom + pad;
       stage.classList.toggle('near-slot', near);
@@ -36,8 +31,6 @@
       stage.classList.remove('near-slot');
       stage.style.setProperty('--ex', '-9999px');
       stage.style.setProperty('--ey', '-9999px');
-      line.style.setProperty('--lx', '-9999px');
-      line.style.setProperty('--ly', '-9999px');
     });
     slot.addEventListener('click', function () { location.href = '/about/'; });
   }
