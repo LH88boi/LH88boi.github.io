@@ -1,0 +1,8 @@
+# 自动生成的构建产物
+site/
+
+# Python 缓存
+__pycache__/
+
+# 本地工具工作数据
+.workbuddy/

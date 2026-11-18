@@ -1,0 +1,17 @@
+site_name: 地下头木
+site_description: 地下头木的个人网站
+site_author: 地下头木
+
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - content.code.copy
+    - search.suggest
+
+nav:
+  - 主页: index.md
+  - 天网: jottings/index.md
+  - 关于: about/index.md
