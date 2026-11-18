@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>天网 · 在线写作</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#ffffff; --ink:#1f2430; --muted:#6b7280;
+    --line:#e5e7eb; --brand:#3f51b5; --brand2:#5c6bc0; --danger:#c62828; --ok:#2e7d32;
+    --shadow:0 1px 3px rgba(0,0,0,.08),0 8px 24px rgba(0,0,0,.05);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6}
+  a{color:var(--brand);text-decoration:none}
+  .wrap{max-width:920px;margin:0 auto;padding:32px 20px 80px}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+  header h1{font-size:26px;margin:0;letter-spacing:.04em}
+  header .sub{color:var(--muted);font-size:14px;margin-top:4px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:8px;padding:9px 16px;font-size:14px;cursor:pointer;background:var(--brand);color:#fff;transition:.15s}
+  .btn:hover{background:var(--brand2)}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .btn.ghost:hover{border-color:#c7cbd1}
+  .btn.danger{background:#fff;color:var(--danger);border:1px solid #f0c9c9}
+  .btn.sm{padding:6px 12px;font-size:13px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:24px}
+  .hidden{display:none!important}
+  .field{margin-bottom:18px}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:7px;color:#374151}
+  .field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;color:var(--ink);background:#fff}
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(63,81,181,.12)}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px}
+  .row{display:flex;gap:14px}
+  .row>.field{flex:1}
+  #loginCard{max-width:560px;margin:60px auto}
+  .steps{background:#f5f6ff;border:1px solid #e0e4ff;border-radius:10px;padding:14px 16px;font-size:13px;color:#3949ab;margin:16px 0}
+  .steps ol{margin:8px 0 0;padding-left:20px}
+  .steps li{margin:4px 0}
+  .msg{padding:10px 14px;border-radius:8px;font-size:14px;margin-bottom:16px}
+  .msg.err{background:#fdecea;color:#b71c1c;border:1px solid #f5c6c2}
+  .msg.ok{background:#e8f5e9;color:#1b5e20;border:1px solid #c8e6c9}
+  .list-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .post{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line)}
+  .post:last-child{border-bottom:0}
+  .post .t{font-weight:600;font-size:16px}
+  .post .meta{color:var(--muted);font-size:12px;margin-top:3px}
+  .post .ops{display:flex;gap:8px}
+  .editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:760px){.editor-grid{grid-template-columns:1fr}}
+  textarea#body{height:420px;resize:vertical;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;line-height:1.7}
+  .preview{border:1px solid var(--line);border-radius:8px;padding:16px;background:#fff;overflow:auto;height:420px;font-size:14px}
+  .preview h1{font-size:24px;margin:0 0 12px}
+  .preview h2{font-size:19px;margin:20px 0 8px}
+  .preview blockquote{border-left:4px solid var(--brand);margin:12px 0;padding:6px 14px;background:#f5f6ff;color:#3949ab}
+  .preview code{background:#f3f4f6;padding:1px 5px;border-radius:4px}
+  .bar{display:flex;gap:10px;align-items:center;margin-top:20px;flex-wrap:wrap}
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.5);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:6px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <h1>天网 · 在线写作</h1>
+      <div class="sub">在这里写日记，保存后自动发布到网站 · <a href="/jottings/" target="_blank">返回天网 ↗</a></div>
+    </div>
+    <div id="whoBox" class="hidden">
+      <span id="who" style="color:var(--muted);font-size:13px;margin-right:12px"></span>
+      <button class="btn ghost sm" onclick="doLogout()">退出</button>
+    </div>
+  </header>
+
+  <div id="msg"></div>
+
+  <!-- 登录 -->
+  <section id="loginCard" class="card">
+    <h2 style="margin-top:0;font-size:19px">用 GitHub 令牌登录</h2>
+    <p style="color:var(--muted);font-size:14px;margin:6px 0 0">只需设置一次，之后打开这个页面就是登录状态。令牌只存在你自己的浏览器里。</p>
+    <div class="steps">
+      <strong>第一次使用，先生成一个令牌：</strong>
+      <ol>
+        <li>打开 <a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens/new</a></li>
+        <li>Note 随便填，比如 <code>diary</code></li>
+        <li>Expiration 选 <code>No expiration</code></li>
+        <li>勾选 <code>repo</code>（整个大类，展开后第一项）</li>
+        <li>拉到底点 <strong>Generate token</strong>，复制那串字符</li>
+      </ol>
+    </div>
+    <div class="field">
+      <label for="token">GitHub 令牌（Personal Access Token）</label>
+      <input id="token" type="password" placeholder="ghp_ 或 github_pat_ 开头" autocomplete="off">
+      <div class="hint">粘贴后点登录。令牌不会上传到任何第三方，只用于读写你的仓库。</div>
+    </div>
+    <button class="btn" id="loginBtn" onclick="doLogin()">登录</button>
+  </section>
+
+  <!-- 文章列表 -->
+  <section id="listView" class="hidden">
+    <div class="card">
+      <div class="list-head">
+        <div style="font-size:18px;font-weight:600">日记列表</div>
+        <button class="btn" onclick="newPost()">+ 写一篇</button>
+      </div>
+      <div id="postList"></div>
+    </div>
+  </section>
+
+  <!-- 编辑器 -->
+  <section id="editorView" class="hidden">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+        <h2 id="editorTitle" style="margin:0;font-size:19px">写日记</h2>
+        <button class="btn ghost sm" onclick="backToList()">← 返回列表</button>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="fTitle">标题</label>
+          <input id="fTitle" placeholder="例如：今天下了一场雨">
+        </div>
+        <div class="field" style="max-width:200px">
+          <label for="fDate">日期</label>
+          <input id="fDate" type="date">
+        </div>
+      </div>
+      <div class="field">
+        <label for="fTags">标签（用逗号分隔，可留空）</label>
+        <input id="fTags" placeholder="日记, 随笔">
+      </div>
+      <div class="field">
+        <label>正文（支持 Markdown）</label>
+        <div class="editor-grid">
+          <textarea id="body" placeholder="## 今天做了什么&#10;&#10;在这里写正文……" oninput="renderPreview()"></textarea>
+          <div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:#374151">实时预览</div>
+            <div class="preview" id="preview"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bar">
+        <button class="btn" id="saveBtn" onclick="savePost()">保存并发布</button>
+        <button class="btn ghost" onclick="backToList()">取消</button>
+        <span id="editorHint" style="color:var(--muted);font-size:13px"></span>
+      </div>
+    </div>
+  </section>
+
+  <footer>地下头木 · 天网在线写作</footer>
+</div>
+
+<script>
+const OWNER = 'LH88boi';
+const REPO  = 'LH88boi.github.io';
+const BRANCH = 'main';
+const DIR = 'docs/jottings';
+const API = 'https://api.github.com';
+
+let token = localStorage.getItem('dtm_gh_token') || '';
+let posts = [];
+let editingFile = null;   // null = 新建
+
+const $ = id => document.getElementById(id);
+function show(id, on){ $(id).classList.toggle('hidden', !on); }
+function msg(text, type='ok'){
+  const el = $('msg');
+  el.innerHTML = text ? `<div class="msg ${type}">${text}</div>` : '';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function esc(s){ return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+async function gh(path, opts={}){
+  const res = await fetch(API + path, {
+    method: opts.method || 'GET',
+    headers: Object.assign({
+      'Authorization': 'Bearer ' + token,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    }, opts.headers || {}),
+    body: opts.body ? JSON.stringify(opts.body) : undefined
+  });
+  if(!res.ok){
+    let info=''; try{ info = (await res.json()).message; }catch(e){}
+    throw new Error('GitHub 返回 ' + res.status + (info ? '：' + info : ''));
+  }
+  return res.status === 204 ? null : res.json();
+}
+function toB64(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin=''; for(const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin);
+}
+function fromB64(b64){
+  const bin = atob(b64);
+  const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+function today(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+async function doLogin(){
+  const t = $('token').value.trim();
+  if(!t){ msg('请先粘贴令牌。','err'); return; }
+  token = t;
+  $('loginBtn').innerHTML = '<span class="spinner"></span>验证中…';
+  try{
+    const u = await gh('/user');
+    localStorage.setItem('dtm_gh_token', token);
+    $('who').textContent = '已登录：' + u.login;
+    show('whoBox', true);
+    enterApp();
+  }catch(e){
+    token = localStorage.getItem('dtm_gh_token') || '';
+    msg('登录失败：' + e.message + '。请检查令牌是否正确、是否勾选了 repo 权限。','err');
+  }finally{
+    $('loginBtn').textContent = '登录';
+  }
+}
+function doLogout(){
+  localStorage.removeItem('dtm_gh_token');
+  token=''; editingFile=null;
+  show('whoBox',false); show('listView',false); show('editorView',false); show('loginCard',true);
+  $('token').value=''; msg('已退出。');
+}
+
+async function enterApp(){
+  show('loginCard',false);
+  msg('');
+  await loadList();
+}
+async function loadList(){
+  msg('<span class="spinner" style="border-color:#3949ab;border-top-color:transparent"></span>正在读取文章…');
+  try{
+    const files = await gh(`/repos/${OWNER}/${REPO}/contents/${DIR}?ref=${BRANCH}`);
+    posts = files.filter(f => f.name.endsWith('.md') && f.name !== 'index.md');
+    posts.forEach(p => { p.info = parseMeta(p); });
+    posts.sort((a,b) => (b.info.date||'').localeCompare(a.info.date||''));
+    renderList();
+    show('listView',true); show('editorView',false);
+    msg('');
+  }catch(e){
+    msg('读取文章失败：' + e.message,'err');
+  }
+}
+function parseMeta(p){
+  // 从已缓存的内容里解析太慢，列表先用文件名与 SHA；标题在打开文章时读取
+  return { date:'', title: p.name.replace(/\.md$/,'').replace(/^\d{4}-\d{2}-\d{2}-/,'') };
+}
+function renderList(){
+  const box = $('postList');
+  if(!posts.length){
+    box.innerHTML = '<div style="color:var(--muted);padding:20px 0">还没有日记。点右上角「写一篇」开始吧。</div>';
+    return;
+  }
+  box.innerHTML = posts.map(p => `
+    <div class="post">
+      <div>
+        <div class="t">${esc(p.info.title)}</div>
+        <div class="meta">${esc(p.name)}</div>
+      </div>
+      <div class="ops">
+        <button class="btn ghost sm" onclick="editPost('${encodeURIComponent(p.name)}')">编辑</button>
+        <button class="btn danger sm" onclick="delPost('${encodeURIComponent(p.name)}')">删除</button>
+      </div>
+    </div>`).join('');
+}
+
+async function newPost(){
+  editingFile = null;
+  $('editorTitle').textContent = '写一篇新日记';
+  $('fTitle').value=''; $('fDate').value=today(); $('fTags').value='';
+  $('body').value=''; $('editorHint').textContent='新文章';
+  renderPreview();
+  show('listView',false); show('editorView',true);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+async function editPost(encName){
+  const name = decodeURIComponent(encName);
+  try{
+    const f = await gh(`/repos/${OWNER}/${REPO}/contents/${DIR}/${encodeURIComponent(name)}?ref=${BRANCH}`);
+    const text = fromB64(f.content);
+    const parsed = parseArticle(text);
+    editingFile = { name, sha: f.sha };
+    $('editorTitle').textContent = '编辑日记';
+    $('fTitle').value = parsed.title;
+    $('fDate').value = parsed.date || today();
+    $('fTags').value = parsed.tags.join(', ');
+    $('body').value = parsed.body;
+    $('editorHint').textContent = '正在编辑 ' + name;
+    renderPreview();
+    show('listView',false); show('editorView',true);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }catch(e){ msg('打开文章失败：'+e.message,'err'); }
+}
+
+function parseArticle(text){
+  let title='', date='', tags=[], body=text;
+  const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+  if(m){
+    const fm = m[1];
+    body = m[2];
+    const tm = fm.match(/^title:\s*(.+)$/m); if(tm) title = tm[1].trim().replace(/^['"]|['"]$/g,'');
+    const dm = fm.match(/^date:\s*(.+)$/m);  if(dm) date  = dm[1].trim().replace(/^['"]|['"]$/g,'').slice(0,10);
+    const gm = fm.match(/^tags:\s*\[(.*)\]$/m);
+    if(gm) tags = gm[1].split(',').map(s=>s.trim().replace(/^['"]|['"]$/g,'')).filter(Boolean);
+  }
+  if(!title){
+    const h = body.match(/^#\s+(.+)$/m); if(h) title = h[1].trim();
+  }
+  return {title,date,tags,body};
+}
+function buildArticle(){
+  const title = $('fTitle').value.trim() || '未命名日记';
+  const date = $('fDate').value || today();
+  const tags = $('fTags').value.split(/[,，]/).map(s=>s.trim()).filter(Boolean);
+  const body = $('body').value;
+  const tagLine = tags.length ? `tags: [${tags.map(t=>"'"+t.replace(/'/g,"")+"'").join(', ')}]\n` : '';
+  const fm = `---\ntitle: '${title.replace(/'/g,"")}'\ndate: ${date}\n${tagLine}---\n\n`;
+  const content = fm + (body.trim() ? body.trim() : `# ${title}\n`) + '\n';
+  const name = date + '-' + (title.replace(/[\\/:*?"<>|\s]+/g,'-').slice(0,40) || 'diary') + '.md';
+  return {name, content};
+}
+
+async function savePost(){
+  const title = $('fTitle').value.trim();
+  if(!title){ msg('请填标题。','err'); return; }
+  const btn = $('saveBtn');
+  btn.innerHTML = '<span class="spinner"></span>保存中…'; btn.disabled=true;
+  try{
+    const art = buildArticle();
+    const path = `${DIR}/${editingFile ? editingFile.name : art.name}`;
+    const putBody = {
+      message: (editingFile ? '更新日记：' : '新增日记：') + title,
+      content: toB64(art.content),
+      branch: BRANCH
+    };
+    if(editingFile && editingFile.sha) putBody.sha = editingFile.sha;
+
+    // 1) 保存文章
+    await gh(`/repos/${OWNER}/${REPO}/contents/${path}`, { method:'PUT', body:putBody });
+
+    // 2) 更新文章列表（若 index.md 含标记区）
+    await updateIndex();
+
+    msg('已保存并发布！约 1～2 分钟后网站更新：<a href="/jottings/" target="_blank">去看看 ↗</a>','ok');
+    await loadList();
+  }catch(e){
+    msg('保存失败：'+e.message,'err');
+  }finally{
+    btn.textContent='保存并发布'; btn.disabled=false;
+  }
+}
+
+async function updateIndex(){
+  const indexPath = `${DIR}/index.md`;
+  let cur;
+  try{ cur = await gh(`/repos/${OWNER}/${REPO}/contents/${indexPath}?ref=${BRANCH}`); }
+  catch(e){ return; } // 没有 index.md 就跳过，不破坏
+  const text = fromB64(cur.content);
+  const start = '<!-- ADMIN_LIST_START -->';
+  const end   = '<!-- ADMIN_LIST_END -->';
+  if(!text.includes(start) || !text.includes(end)) return; // 未启用自动列表则不改
+  const files = await gh(`/repos/${OWNER}/${REPO}/contents/${DIR}?ref=${BRANCH}`);
+  const articles = [];
+  for(const f of files.filter(f=>f.name.endsWith('.md') && f.name!=='index.md')){
+    let title = f.name.replace(/\.md$/,'').replace(/^\d{4}-\d{2}-\d{2}-/,'');
+    try{
+      const full = await gh(`/repos/${OWNER}/${REPO}/contents/${DIR}/${encodeURIComponent(f.name)}?ref=${BRANCH}`);
+      const p = parseArticle(fromB64(full.content));
+      if(p.title) title = p.title;
+      if(p.date) articles.push({title, slug:f.name.replace(/\.md$/,''), date:p.date});
+      else articles.push({title, slug:f.name.replace(/\.md$/,''), date:''});
+    }catch(e){ articles.push({title, slug:f.name.replace(/\.md$/,''), date:''}); }
+  }
+  articles.sort((a,b)=>(b.date||'').localeCompare(a.date||'') || b.slug.localeCompare(a.slug));
+  const list = articles.map(a=>`- [${a.title}](${a.slug})`).join('\n');
+  const replaced = text.replace(new RegExp(start+'[\\s\\S]*?'+end), start+'\n'+list+'\n'+end);
+  await gh(`/repos/${OWNER}/${REPO}/contents/${indexPath}`, {
+    method:'PUT',
+    body:{ message:'更新日记列表', content:toB64(replaced), sha:cur.sha, branch:BRANCH }
+  });
+}
+
+async function delPost(encName){
+  const name = decodeURIComponent(encName);
+  if(!confirm('确定删除《'+name+'》？此操作会提交到仓库，无法在网页端撤销。')) return;
+  try{
+    const f = await gh(`/repos/${OWNER}/${REPO}/contents/${DIR}/${encodeURIComponent(name)}?ref=${BRANCH}`);
+    await gh(`/repos/${OWNER}/${REPO}/contents/${DIR}/${encodeURIComponent(name)}`, {
+      method:'DELETE',
+      body:{ message:'删除日记：'+name, sha:f.sha, branch:BRANCH }
+    });
+    await updateIndex();
+    msg('已删除。','ok');
+    await loadList();
+  }catch(e){ msg('删除失败：'+e.message,'err'); }
+}
+
+function backToList(){ show('editorView',false); show('listView',true); msg(''); }
+
+function renderPreview(){
+  let s = $('body').value || '';
+  s = esc(s);
+  s = s.replace(/^###\s+(.+)$/gm,'<h3>$1</h3>')
+       .replace(/^##\s+(.+)$/gm,'<h2>$1</h2>')
+       .replace(/^#\s+(.+)$/gm,'<h1>$1</h1>')
+       .replace(/^&gt;\s?(.+)$/gm,'<blockquote>$1</blockquote>')
+       .replace(/^[-*]\s+(.+)$/gm,'<li>$1</li>')
+       .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+       .replace(/`(.+?)`/g,'<code>$1</code>')
+       .replace(/\n{2,}/g,'</p><p>');
+  $('preview').innerHTML = '<p>'+s+'</p>';
+}
+
+// 启动
+if(token){
+  gh('/user').then(u=>{
+    $('who').textContent='已登录：'+u.login;
+    show('whoBox',true);
+    enterApp();
+  }).catch(()=>{
+    localStorage.removeItem('dtm_gh_token'); token='';
+  });
+}
+</script>
+</body>
+</html>
