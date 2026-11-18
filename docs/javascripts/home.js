@@ -5,9 +5,10 @@
     if (!stage || stage.dataset.bound) return;
     stage.dataset.bound = '1';
     var lens = document.getElementById('lens');
+    var ring = document.getElementById('ring');
     var slot = document.getElementById('slot');
 
-    // mx/my：反色镜；ex/ey + wx/wy/ww/wh：圆内木字
+    // mx/my：镜片与黑环；ex/ey：目字镂空 + 木字裁切；wx/wy/ww/wh：木字定位
     stage.addEventListener('mousemove', function (e) {
       var sr = slot.getBoundingClientRect();
       var st = stage.getBoundingClientRect();
@@ -20,15 +21,14 @@
       stage.style.setProperty('--wh', sr.height + 'px');
       stage.style.setProperty('--ex', (e.clientX - sr.left) + 'px');
       stage.style.setProperty('--ey', (e.clientY - sr.top) + 'px');
-      var pad = 60;
-      var near = e.clientX >= sr.left - pad && e.clientX <= sr.right + pad &&
-                 e.clientY >= sr.top - pad && e.clientY <= sr.bottom + pad;
-      stage.classList.toggle('near-slot', near);
     });
-    stage.addEventListener('mouseenter', function () { lens.style.opacity = '1'; });
+    stage.addEventListener('mouseenter', function () {
+      lens.style.opacity = '1';
+      ring.style.opacity = '1';
+    });
     stage.addEventListener('mouseleave', function () {
       lens.style.opacity = '0';
-      stage.classList.remove('near-slot');
+      ring.style.opacity = '0';
       stage.style.setProperty('--ex', '-9999px');
       stage.style.setProperty('--ey', '-9999px');
     });

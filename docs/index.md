@@ -46,9 +46,12 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
   user-select: none;
 }
 .slot{ position: relative; display: inline-block; cursor: pointer; }
-.eye{ position: relative; z-index: 1; color: #1a1a1a; }
-/* 靠近「目」时整个隐去目，避免它的笔画落在反色镜边缘产生白线；其它字照常被反色 */
-.stage.near-slot .eye{ opacity: 0; }
+/* 目：只在镜片圆内隐去，圆外照常显示 */
+.eye{
+  position: relative; z-index: 1; color: #1a1a1a;
+  -webkit-mask-image: radial-gradient(circle var(--r) at var(--ex, -9999px) var(--ey, -9999px), transparent 99%, #000 100%);
+  mask-image: radial-gradient(circle var(--r) at var(--ex, -9999px) var(--ey, -9999px), transparent 99%, #000 100%);
+}
 /* 木放在镂空的目之外，只在反色镜圆内裁切显示 */
 .wood{
   position: absolute; z-index: 3;
@@ -75,7 +78,19 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
   opacity: 0;
   transition: opacity .15s;
 }
-@media (hover: none){ .lens{ display: none; } }
+/* 黑色细环盖住镜片边缘的抗锯齿白线，和镜片同圆心同尺寸 */
+.ring{
+  position: fixed; z-index: 10;
+  left: var(--mx); top: var(--my);
+  width: calc(var(--r) * 2); height: calc(var(--r) * 2);
+  transform: translate(-50%, -50%);
+  border: 3px solid #000;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .15s;
+}
+@media (hover: none){ .lens, .ring{ display: none; } }
 </style>
 
 <div class="stage" id="stage">
@@ -83,4 +98,5 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
   <span class="wood" id="wood">木</span>
   <div class="sub">一处安静的角落，记录所见与所想。</div>
   <div class="lens" id="lens"></div>
+  <div class="ring" id="ring"></div>
 </div>
