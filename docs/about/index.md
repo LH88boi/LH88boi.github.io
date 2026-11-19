@@ -8,3 +8,7 @@
 
 - 邮箱：（待补充）
 - GitHub：（待补充）
+
+<div class="comments-block">
+  <div data-disfora-comments></div>
+</div>

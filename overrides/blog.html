@@ -1,0 +1,27 @@
+{#-
+  基于 Material 主题 blog.html，仅额外在文章列表底部加入 Disfora 纯评论区。
+  主题升级后如需同步，可比对 material/templates/blog.html。
+-#}
+{% extends "main.html" %}
+{% block container %}
+  <div class="md-content" data-md-component="content">
+    <div class="md-content__inner">
+      <header class="md-typeset">
+        {{ page.content }}
+      </header>
+      {% for post in posts %}
+        {% include "partials/post.html" %}
+      {% endfor %}
+      {% if pagination %}
+        {% block pagination %}
+          {% include "partials/pagination.html" %}
+        {% endblock %}
+      {% endif %}
+      {% if page.url == "jottings/" %}
+        <div class="comments-block">
+          <div data-disfora-comments></div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

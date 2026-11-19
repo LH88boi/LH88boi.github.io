@@ -4,3 +4,9 @@
   {{ super() }}
   <meta name="disfora-site-verification" content="dc7e4433d2a56b63a7d08b0ff25ceffd">
 {% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <!-- Disfora 评论加载器：放在 </body> 前，仅在含容器的页面注入组件 -->
+  <script src="https://disfora.com/public/disfora.js" async></script>
+{% endblock %}
