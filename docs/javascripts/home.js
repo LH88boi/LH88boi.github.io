@@ -5,10 +5,9 @@
     if (!stage || stage.dataset.bound) return;
     stage.dataset.bound = '1';
     var lens = document.getElementById('lens');
-    var ring = document.getElementById('ring');
     var slot = document.getElementById('slot');
 
-    // mx/my：镜片与黑环；ex/ey：目字镂空 + 木字裁切；wx/wy/ww/wh：木字定位
+    // mx/my：镜片；ex/ey：目字镂空 + 木字裁切；wx/wy/ww/wh：木字定位
     stage.addEventListener('mousemove', function (e) {
       var sr = slot.getBoundingClientRect();
       var st = stage.getBoundingClientRect();
@@ -24,11 +23,9 @@
     });
     stage.addEventListener('mouseenter', function () {
       lens.style.opacity = '1';
-      ring.style.opacity = '1';
     });
     stage.addEventListener('mouseleave', function () {
       lens.style.opacity = '0';
-      ring.style.opacity = '0';
       stage.style.setProperty('--ex', '-9999px');
       stage.style.setProperty('--ey', '-9999px');
     });
