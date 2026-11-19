@@ -5,6 +5,7 @@ site_author: 地下头木
 theme:
   name: material
   language: zh
+  custom_dir: overrides
   features:
     - navigation.instant
     - navigation.tracking
