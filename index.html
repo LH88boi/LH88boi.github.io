@@ -350,19 +350,7 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
   opacity: 0;
   transition: opacity .15s;
 }
-/* 黑色细环盖住镜片边缘的抗锯齿白线，和镜片同圆心同尺寸 */
-.ring{
-  position: fixed; z-index: 10;
-  left: var(--mx); top: var(--my);
-  width: calc(var(--r) * 2); height: calc(var(--r) * 2);
-  transform: translate(-50%, -50%);
-  border: 3px solid #000;
-  border-radius: 50%;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity .15s;
-}
-@media (hover: none){ .lens, .ring{ display: none; } }
+@media (hover: none){ .lens{ display: none; } }
 </style>
 
 <div class="stage" id="stage">
@@ -370,7 +358,6 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
   <span class="wood" id="wood">木</span>
   <div class="sub">一处安静的角落，记录所见与所想。</div>
   <div class="lens" id="lens"></div>
-  <div class="ring" id="ring"></div>
 </div>
 
 
