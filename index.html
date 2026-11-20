@@ -350,8 +350,7 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
   background: #fff;
   mix-blend-mode: difference;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity .15s;
+  opacity: 1;                       /* 始终可见，靠坐标移出视口来隐藏 */
 }
 @media (hover: none){ .lens{ display: none; } }
 </style>
@@ -359,9 +358,41 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
 <div class="stage" id="stage">
   <div class="line">地下头<span class="slot" id="slot"><span class="eye" id="eye">目</span></span></div>
   <span class="wood" id="wood">木</span>
-  <div class="sub">一处安静的角落，记录所见与所想。</div>
+  <div class="sub">山顶洞窟地下头目</div>
   <div class="lens" id="lens"></div>
 </div>
+
+<script>
+/* 内联执行：不等外部脚本，页面一解析完鼠标一动就有反色 */
+(function () {
+  var stage = document.getElementById('stage');
+  if (!stage || stage.dataset.bound) return;
+  stage.dataset.bound = '1';
+  var slot = document.getElementById('slot');
+
+  function move(e) {
+    var sr = slot.getBoundingClientRect();
+    var st = stage.getBoundingClientRect();
+    stage.style.setProperty('--mx', e.clientX + 'px');
+    stage.style.setProperty('--my', e.clientY + 'px');
+    stage.style.setProperty('--wx', (sr.left - st.left) + 'px');
+    stage.style.setProperty('--wy', (sr.top - st.top) + 'px');
+    stage.style.setProperty('--ww', sr.width + 'px');
+    stage.style.setProperty('--wh', sr.height + 'px');
+    stage.style.setProperty('--ex', (e.clientX - sr.left) + 'px');
+    stage.style.setProperty('--ey', (e.clientY - sr.top) + 'px');
+  }
+  function hide() {
+    stage.style.setProperty('--mx', '-9999px');
+    stage.style.setProperty('--my', '-9999px');
+    stage.style.setProperty('--ex', '-9999px');
+    stage.style.setProperty('--ey', '-9999px');
+  }
+  stage.addEventListener('mousemove', move);
+  stage.addEventListener('mouseleave', hide);
+  slot.addEventListener('click', function () { location.href = '/about/'; });
+})();
+</script>
 
 
 
