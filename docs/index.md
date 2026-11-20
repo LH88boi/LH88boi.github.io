@@ -33,7 +33,7 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
   width: 100%; height: 100%;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  background: #fff;
+  background: #FCFAF8;
   isolation: isolate;
   overflow: hidden;
 }
@@ -42,13 +42,13 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
   font-size: clamp(4rem, 13vw, 9rem);
   font-weight: 800; letter-spacing: .08em;
   line-height: 1.15; white-space: nowrap;
-  color: #1a1a1a;
+  color: #1F1B18;
   user-select: none;
 }
 .slot{ position: relative; display: inline-block; cursor: pointer; }
 /* 目：只在镜片圆内隐去，圆外照常显示 */
 .eye{
-  position: relative; z-index: 1; color: #1a1a1a;
+  position: relative; z-index: 1; color: #1F1B18;
   -webkit-mask-image: radial-gradient(circle var(--r) at var(--ex, -9999px) var(--ey, -9999px), transparent 99%, #000 100%);
   mask-image: radial-gradient(circle var(--r) at var(--ex, -9999px) var(--ey, -9999px), transparent 99%, #000 100%);
 }
@@ -59,7 +59,7 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
   width: var(--ww, 0); height: var(--wh, 0);
   font-size: clamp(4rem, 13vw, 9rem);
   font-weight: 800; line-height: 1.15; letter-spacing: .08em;
-  white-space: nowrap; color: #1a1a1a; pointer-events: none;
+  white-space: nowrap; color: #1F1B18; pointer-events: none;
   -webkit-clip-path: circle(var(--r) at var(--ex, -9999px) var(--ey, -9999px));
   clip-path: circle(var(--r) at var(--ex, -9999px) var(--ey, -9999px));
 }
@@ -72,7 +72,7 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
   width: calc(var(--r) * 2); height: calc(var(--r) * 2);
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: #fff;
+  background: #FCFAF8;
   mix-blend-mode: difference;
   pointer-events: none;
   opacity: 1;                       /* 始终可见，靠坐标移出视口来隐藏 */
