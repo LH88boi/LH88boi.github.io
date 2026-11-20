@@ -122,9 +122,9 @@
           <label for="fTitle">标题</label>
           <input id="fTitle" placeholder="例如：今天下了一场雨">
         </div>
-        <div class="field" style="max-width:200px">
-          <label for="fDate">日期</label>
-          <input id="fDate" type="date">
+        <div class="field" style="max-width:230px">
+          <label for="fDate">发布时间</label>
+          <input id="fDate" type="datetime-local" step="60">
         </div>
       </div>
       <div class="field">
@@ -206,6 +206,24 @@ function fromB64(b64){
 function today(){
   const d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function nowLocal(){
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  return today() + 'T' + p(d.getHours()) + ':' + p(d.getMinutes());
+}
+/* datetime-local 的值转成带时区的 ISO 字符串，保证排序精确到分钟 */
+function toISOWithOffset(value){
+  if(!value) return '';
+  const d = new Date(value);
+  if(isNaN(d.getTime())) return '';
+  const p = n => String(n).padStart(2,'0');
+  const off = -d.getTimezoneOffset();
+  const sign = off >= 0 ? '+' : '-';
+  const oh = p(Math.floor(Math.abs(off) / 60));
+  const om = p(Math.abs(off) % 60);
+  return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate()) +
+    'T' + p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()) + sign + oh + ':' + om;
 }
 
 /* ---------- 图片上传 ---------- */
@@ -348,7 +366,7 @@ function renderList(){
 async function newPost(){
   editingFile = null;
   $('editorTitle').textContent = '写一篇新日记';
-  $('fTitle').value=''; $('fDate').value=today(); $('fTags').value='';
+  $('fTitle').value=''; $('fDate').value=nowLocal(); $('fTags').value='';
   $('body').value=''; $('editorHint').textContent='新文章';
   renderPreview();
   show('listView',false); show('editorView',true);
@@ -363,7 +381,7 @@ async function editPost(encName){
     editingFile = { name, sha: f.sha };
     $('editorTitle').textContent = '编辑日记';
     $('fTitle').value = parsed.title;
-    $('fDate').value = parsed.date || today();
+    $('fDate').value = parsed.date || nowLocal();
     $('fTags').value = parsed.tags.join(', ');
     $('body').value = parsed.body;
     $('editorHint').textContent = '正在编辑 ' + name;
@@ -380,7 +398,11 @@ function parseArticle(text){
     const fm = m[1];
     body = m[2];
     const tm = fm.match(/^title:\s*(.+)$/m); if(tm) title = tm[1].trim().replace(/^['"]|['"]$/g,'');
-    const dm = fm.match(/^date:\s*(.+)$/m);  if(dm) date  = dm[1].trim().replace(/^['"]|['"]$/g,'').slice(0,10);
+    const dm = fm.match(/^date:\s*(.+)$/m);
+    if(dm){
+      const raw = dm[1].trim().replace(/^['"]|['"]$/g,'');
+      date = raw.indexOf('T') >= 0 ? raw.slice(0,16) : (raw.slice(0,10) + 'T00:00');
+    }
     const gm = fm.match(/^tags:\s*\[(.*)\]$/m);
     if(gm) tags = gm[1].split(',').map(s=>s.trim().replace(/^['"]|['"]$/g,'')).filter(Boolean);
   }
@@ -392,20 +414,22 @@ function parseArticle(text){
   return {title,date,tags,body};
 }
 function buildArticle(){
-  const date = $('fDate').value || today();
+  const dateLocal = $('fDate').value || nowLocal();
+  const date = toISOWithOffset(dateLocal) || dateLocal;
+  const day = dateLocal.slice(0,10);
   const tags = $('fTags').value.split(/[,，]/).map(s=>s.trim()).filter(Boolean);
   const rawBody = $('body').value.trim();
   // 标题可留空：优先取正文第一行，再退回到日期
   let title = $('fTitle').value.trim();
   if(!title){
     const first = rawBody.split('\n').map(s=>s.trim()).find(s=>s && !/^#{1,6}\s/.test(s) && s !== '<!-- more -->') || '';
-    title = first.replace(/[*_`>\[\]]/g,'').slice(0,30) || (date.slice(5).replace('-','月') + '日');
+    title = first.replace(/[*_`>\[\]]/g,'').slice(0,30) || (day.slice(5).replace('-','月') + '日');
   }
   const tagLine = tags.length ? `tags: [${tags.map(t=>"'"+t.replace(/'/g,"")+"'").join(', ')}]\n` : '';
   const fm = `---\ntitle: '${title.replace(/'/g,"")}'\ndate: ${date}\n${tagLine}---\n\n`;
   const text = rawBody || `# ${title}\n`;
   const content = fm + text + '\n';
-  const name = date + '-' + (title.replace(/[\\/:*?"<>|\s]+/g,'-').slice(0,40) || 'diary') + '.md';
+  const name = day + '-' + (title.replace(/[\\/:*?"<>|\s]+/g,'-').slice(0,40) || 'diary') + '.md';
   return {name, content};
 }
 
