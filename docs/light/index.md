@@ -36,98 +36,29 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
 .light-app .hidden { display: none !important; }
 .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 
-/* ---------- 开始页：窗边木桌场景 ---------- */
-.intro { position: absolute; inset: 0; z-index: 1; overflow: hidden; background: #dcc3a4; }
-.scene-wall {
-  position: absolute; inset: 0 0 74% 0;
-  background:
-    radial-gradient(50% 120% at 18% 0%, rgba(255, 248, 230, .9), transparent 70%),
-    linear-gradient(180deg, #f1e7d8, #e6d8c3);
+/* ---------- 开始页：俯视书桌（写实木桌背景 + 散落物件） ---------- */
+.intro {
+  position: absolute; inset: 0; z-index: 1; overflow: hidden;
+  background: #e7d9c6 url("/images/desk-overhead.webp") center center / cover no-repeat;
 }
-.scene-window {
-  position: absolute; left: clamp(18px, 5vw, 74px); top: clamp(10px, 2.5vh, 26px);
-  width: clamp(240px, 34vw, 470px); height: clamp(150px, 27vh, 260px);
-  border: 10px solid #fbf6ed; border-radius: 12px; overflow: hidden;
-  box-shadow: 0 12px 28px rgba(90, 70, 48, .16), inset 0 0 0 1px rgba(120, 96, 70, .18);
-}
-.scene-window::after {
-  content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 8px;
-  transform: translateX(-50%); background: #fbf6ed; z-index: 4;
-}
-.sky {
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, #bcd8e8 0%, #dcebf0 55%, #f6ead2 100%);
-}
-.sun {
-  position: absolute; right: 18%; top: 16%; width: 74px; height: 74px; border-radius: 50%;
-  background: radial-gradient(circle, #fff9e2 0%, #ffedb0 45%, rgba(255, 226, 150, 0) 72%);
-  box-shadow: 0 0 60px 26px rgba(255, 234, 175, .55);
-}
-.hill {
-  position: absolute; left: -5%; right: -5%; bottom: -12%; height: 46%;
-  background: linear-gradient(180deg, #9db59a, #7d9a80);
-  border-radius: 50% 50% 0 0 / 60% 60% 0 0;
-}
-.beam {
-  position: absolute; right: -30%; top: -60%; width: 120%; height: 220%;
-  background: linear-gradient(105deg, rgba(255, 248, 214, .55), rgba(255, 248, 214, 0) 62%);
-  transform: rotate(18deg); pointer-events: none; z-index: 3;
-}
-.rain { position: absolute; inset: 0; display: none; z-index: 2; opacity: .55;
-  background-image: repeating-linear-gradient(104deg, transparent 0 9px, rgba(255,255,255,.75) 9px 10px, transparent 10px 18px);
-  background-size: 120px 120px; animation: rainfall .7s linear infinite;
-}
-.intro.rainy .sky { background: linear-gradient(180deg, #8899a8, #b6c1c6 60%, #d8d9d3); }
-.intro.rainy .sun { opacity: 0; }
-.intro.rainy .beam { opacity: .18; }
-.intro.rainy .rain { display: block; }
-@keyframes rainfall { from { background-position: 0 0; } to { background-position: -60px 120px; } }
-.curtain {
-  position: absolute; top: -8px; bottom: -8px; width: 34%; z-index: 5;
-  background: linear-gradient(90deg, #f6ead6, #e2cdae 60%, #cbb08d);
-  box-shadow: 0 6px 16px rgba(90, 70, 48, .18);
-  transform-origin: top center; pointer-events: none;
-}
-.curtain::after {
-  content: ""; position: absolute; inset: 0; opacity: .5;
-  background: repeating-linear-gradient(90deg, transparent 0 16px, rgba(255,255,255,.35) 16px 22px);
-}
-.curtain.left { left: -6%; border-radius: 0 0 60% 12%; animation: swayL 5.5s ease-in-out infinite alternate; }
-.curtain.right { right: -6%; border-radius: 0 0 12% 60%; animation: swayR 6.4s ease-in-out infinite alternate; }
-@keyframes swayL { from { transform: rotate(-1.5deg) skewX(0deg); } to { transform: rotate(3deg) skewX(2deg); } }
-@keyframes swayR { from { transform: rotate(1.5deg) skewX(0deg); } to { transform: rotate(-3deg) skewX(-2deg); } }
-
-.scene-desk {
-  position: absolute; inset: 26% 0 0 0;
-  background:
-    radial-gradient(70% 60% at 32% 0%, rgba(255, 246, 222, .42), transparent 72%),
-    repeating-linear-gradient(91deg, rgba(112, 76, 44, .06) 0 2px, transparent 2px 26px),
-    linear-gradient(178deg, #c9a27b, #b98c62 60%, #a87a52);
-  box-shadow: inset 0 16px 34px rgba(80, 54, 30, .2);
-}
-.scene-desk::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(130% 100% at 50% 45%, transparent 55%, rgba(70, 46, 26, .22) 100%);
-}
-.weather-toggle {
-  position: absolute; left: clamp(18px, 5vw, 74px); top: clamp(10px, 2.5vh, 26px);
-  transform: translateY(calc(clamp(150px, 27vh, 260px) + 20px));
-  z-index: 16; border: 1px solid rgba(255,255,255,.5); border-radius: 999px;
-  background: rgba(255, 250, 240, .82); color: #6d5540; cursor: pointer;
-  font-size: 11px; letter-spacing: .1em; padding: 6px 12px; font-family: inherit;
+.intro::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: radial-gradient(125% 95% at 50% 45%, transparent 56%, rgba(60, 42, 26, .18) 100%);
 }
 .desk-label {
-  position: absolute; right: clamp(18px, 4vw, 54px); top: 8%; z-index: 16;
-  text-align: right; color: #5a4231;
+  position: absolute; left: 50%; top: 6%; transform: translateX(-50%); z-index: 16;
+  text-align: center; color: #4a3524;
+  background: rgba(253, 249, 242, .82); border: 1px solid rgba(120, 92, 66, .18);
+  padding: 12px 30px 14px; border-radius: 4px;
+  box-shadow: 0 6px 18px rgba(70, 48, 28, .18);
 }
 .desk-label h1 {
-  margin: 0; font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 600; letter-spacing: .18em;
-  font-family: Georgia, "Songti SC", "STSong", serif; text-indent: .18em;
-  text-shadow: 0 2px 0 rgba(255,255,255,.4);
+  margin: 0; font-size: clamp(1.7rem, 4vw, 2.8rem); font-weight: 600; letter-spacing: .2em;
+  font-family: Georgia, "Songti SC", "STSong", serif; text-indent: .2em;
 }
-.desk-label p { margin: 8px 0 0; font-size: 12px; letter-spacing: .14em; color: #745b46; }
+.desk-label p { margin: 6px 0 0; font-size: 11px; letter-spacing: .16em; color: #8a7159; }
 
-.intro-deck { position: absolute; inset: 20% 0 0; z-index: 10; }
+.intro-deck { position: absolute; inset: 0; z-index: 10; }
 .intro-card {
   position: absolute; left: var(--l); top: var(--t);
   transform: rotate(var(--rot)); transition: transform .18s var(--ease), box-shadow .18s ease;
@@ -136,11 +67,18 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
   overflow: hidden; cursor: default; z-index: var(--z);
 }
 .intro-card:hover { transform: rotate(var(--rot)) translateY(-8px) scale(1.02); box-shadow: 0 18px 34px rgba(70, 48, 28, .3); z-index: 40 !important; }
-.ic-portrait { width: clamp(82px, 9.6vw, 130px); height: clamp(122px, 14.2vw, 192px); }
-.ic-landscape { width: clamp(112px, 13vw, 182px); height: clamp(84px, 9.8vw, 136px); }
-.ic-note {
+/* 形状大小不一的物件：电影海报最大、书最小、游戏盒中等、旅途横版 */
+.ic-poster { width: clamp(112px, 13vw, 178px); height: clamp(156px, 18vw, 246px); }
+.ic-book { width: clamp(64px, 7.4vw, 100px); height: clamp(92px, 10.6vw, 142px); }
+.ic-game { width: clamp(86px, 10vw, 136px); height: clamp(108px, 12.4vw, 166px); }
+.ic-landscape { width: clamp(116px, 14vw, 196px); height: clamp(84px, 10vw, 138px); }
+.ic-note-wrap {
   width: clamp(120px, 14vw, 186px); height: clamp(84px, 9.8vw, 136px);
-  background: #f7edcf; padding: 12px 14px; display: flex; flex-direction: column; justify-content: space-between;
+}
+.ic-note {
+  width: 100%; height: 100%;
+  background: #f7edcf; padding: 12px 14px; box-sizing: border-box;
+  display: flex; flex-direction: column; justify-content: space-between;
 }
 .ic-note .q { font-size: 11px; line-height: 1.6; color: #6b553f; }
 .ic-note .meta { font-size: 9px; color: #9a8268; letter-spacing: .08em; }
@@ -186,13 +124,13 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
 }
 .pencil:hover .pencil-label, .pencil:focus-visible .pencil-label { opacity: 1; transform: none; }
 
-/* ---------- 正式页 ---------- */
-.studio { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; }
+/* ---------- 正式页：像「关于」「天网」那样一条条往下排 ---------- */
+.studio { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; background: var(--paper); overflow: auto; }
 .studio-head {
   flex: none; display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
-  padding: 18px clamp(20px, 4vw, 54px) 12px;
+  padding: 22px clamp(20px, 6vw, 90px) 16px; border-bottom: 1px solid var(--border);
 }
-.studio-head h2 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: .14em; font-family: Georgia, "Songti SC", serif; }
+.studio-head h2 { margin: 0; font-size: 26px; font-weight: 600; letter-spacing: .14em; font-family: Georgia, "Songti SC", serif; }
 .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
 .tab {
   border: 1px solid transparent; background: transparent; color: var(--ink-2);
@@ -201,66 +139,50 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
 }
 .tab:hover { background: var(--surface-2); color: var(--ink); }
 .tab[aria-selected="true"] { background: var(--accent); color: #fff; box-shadow: 0 3px 12px rgba(232, 89, 12, .28); }
-.tab:focus-visible, .tool:focus-visible, .card:focus-visible, .close:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.tab:focus-visible, .tool:focus-visible, .paper:focus-visible, .close:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .tools { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .search {
-  border: 1px solid var(--border); background: rgba(255, 255, 255, .72); color: var(--ink);
+  border: 1px solid var(--border); background: #fff; color: var(--ink);
   border-radius: 999px; padding: 8px 14px; font-size: 13px; width: 150px; font-family: inherit;
 }
 .search:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 .tool {
-  border: 1px solid var(--border); background: rgba(255, 255, 255, .72); color: var(--ink-2);
+  border: 1px solid var(--border); background: #fff; color: var(--ink-2);
   border-radius: 999px; padding: 8px 14px; font-size: 12px; cursor: pointer; font-family: inherit;
   text-decoration: none; display: inline-flex; align-items: center; transition: .15s ease;
 }
-.tool:hover { background: #fff; color: var(--ink); box-shadow: var(--shadow-1); }
+.tool:hover { color: var(--ink); box-shadow: var(--shadow-1); }
 .tool.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
 .tool.primary:hover { background: #d64d06; color: #fff; }
 
-.desk-wrap {
-  position: relative; flex: 1; margin: 0 clamp(16px, 3vw, 44px) clamp(16px, 3vw, 36px);
-  border-radius: 24px; overflow: auto;
-  background:
-    radial-gradient(70% 50% at 50% 0%, rgba(255, 255, 255, .8), transparent 72%),
-    rgba(248, 242, 235, .35);
-  border: 1px solid rgba(138, 127, 117, .12);
+.paper-list { max-width: 900px; margin: 0 auto; padding: 10px clamp(20px, 6vw, 40px) 90px; }
+.paper {
+  display: grid; grid-template-columns: 132px 1fr; gap: 26px; align-items: start;
+  padding: 28px 0; border-bottom: 1px solid var(--border); cursor: pointer;
+  animation: rise .3s var(--ease) both;
 }
-.desk-wrap.grid-on::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background-image: linear-gradient(rgba(138, 127, 117, .10) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(138, 127, 117, .10) 1px, transparent 1px);
-  background-size: 48px 48px;
+.paper:hover .p-title { color: var(--accent); }
+.paper.filtered { display: none !important; }
+.p-cover {
+  position: relative; width: 132px; border-radius: 10px; overflow: hidden; background: var(--surface-2);
+  box-shadow: var(--shadow-1); aspect-ratio: 3 / 4;
 }
-.desk { position: relative; width: 100%; min-height: 100%; }
-.card {
-  position: absolute; left: 0; top: 0; cursor: grab; user-select: none;
-  transform: translate(var(--x), var(--y)) rotate(var(--rot, 0deg));
-  transition: transform .2s var(--ease), box-shadow .18s ease; z-index: var(--z, 1);
+.p-cover.landscape { aspect-ratio: 4 / 3; align-self: start; margin-top: 22px; }
+.p-cover .pc-cover { background-size: cover; background-position: center; }
+.p-cover .pc-cover::after { display: none; }
+.p-cover .kind {
+  position: absolute; left: 8px; top: 8px; z-index: 2; font-size: 9px; letter-spacing: .12em;
+  padding: 3px 8px; border-radius: 999px; background: rgba(255, 255, 255, .88); color: var(--ink-2);
 }
-.card:active { cursor: grabbing; }
-.card.dragging { transition: none; z-index: 30 !important;
-  transform: translate(var(--x), var(--y)) rotate(calc(var(--rot, 0deg) + 1.5deg)) scale(1.03);
-  box-shadow: var(--shadow-2); }
-.card.filtered { display: none !important; }
-.card .face { width: 100%; height: 100%; }
-.card .pin {
-  position: absolute; right: 8px; top: 8px; z-index: 6; width: 26px; height: 26px; border-radius: 50%;
-  border: 1px solid var(--border); background: rgba(255, 255, 255, .82); color: var(--ink-3); cursor: pointer;
-  display: grid; place-items: center; font-size: 13px; line-height: 1; padding: 0;
-  opacity: 0; transition: opacity .15s ease, color .15s ease, background .15s ease;
+.p-body h3 {
+  margin: 0 0 6px; font-size: 21px; font-weight: 600; line-height: 1.4;
+  font-family: Georgia, "Songti SC", serif; transition: color .15s ease;
 }
-.card:hover .pin, .card:focus-within .pin, .card.pinned .pin { opacity: 1; }
-.card.pinned .pin { color: var(--accent); background: #fff; box-shadow: 0 2px 8px rgba(232, 89, 12, .22); }
-.card.pinned { --z: 12 !important; }
-.card .tag {
-  position: absolute; left: 12px; top: 12px; z-index: 4; font-size: 9px; letter-spacing: .14em;
-  text-transform: uppercase; padding: 4px 8px; border-radius: 999px; background: rgba(255, 255, 255, .82);
-  border: 1px solid var(--border); color: var(--ink-2);
-}
+.p-meta { font-size: 11px; color: var(--ink-3); letter-spacing: .08em; margin-bottom: 12px; }
+.p-desc { color: #555; font-size: 14px; line-height: 1.9; margin: 0 0 10px; }
+.p-quote { border-left: 3px solid var(--accent); padding-left: 14px; color: var(--ink-2); font-size: 13px; line-height: 1.8; margin: 0; }
 .empty {
-  position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%);
-  padding: 34px 42px; border-radius: var(--radius); border: 1px dashed var(--border);
-  background: rgba(255, 255, 255, .6); color: var(--ink-2); text-align: center; font-size: 14px; line-height: 1.8;
+  padding: 70px 20px; text-align: center; color: var(--ink-2); line-height: 2; font-size: 14px;
 }
 .empty a { color: var(--accent); }
 
@@ -297,11 +219,12 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
 .toast .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px rgba(232, 89, 12, .18); }
 
 @media (max-width: 760px) {
-  .intro-deck { inset: 24% 0 0; }
+  .desk-label { top: 4%; padding: 10px 18px; }
   .desk-label h1 { font-size: 2rem; }
   .studio-head { gap: 10px; padding: 14px 16px 10px; }
   .search { width: 120px; }
   .tools { margin-left: 0; width: 100%; }
+  .paper { grid-template-columns: 96px 1fr; gap: 16px; }
   .modal { padding: 26px 22px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -311,17 +234,8 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
 
 <div class="light-app" id="lightApp">
 
-  <!-- 开始页：窗边木桌，散落满桌的碎片 -->
+  <!-- 开始页：俯视书桌，散落满桌的物件 -->
   <section class="intro" id="intro">
-    <div class="scene-wall">
-      <div class="scene-window">
-        <div class="sky"></div><div class="hill"></div><div class="sun"></div><div class="beam"></div>
-        <div class="rain"></div>
-        <div class="curtain left"></div><div class="curtain right"></div>
-      </div>
-    </div>
-    <div class="scene-desk"></div>
-    <button class="weather-toggle mono" id="weatherBtn" aria-label="切换晴雨">☀ 晴天 · 点我换天气</button>
     <div class="desk-label">
       <h1>光影</h1>
       <p class="mono">阅读 · 电影 · 旅途 · 游戏</p>
@@ -351,15 +265,13 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
       </div>
       <div class="tools">
         <input class="search" id="search" type="search" placeholder="找点什么…" aria-label="搜索">
-        <button class="tool" id="tidyBtn">整理桌面</button>
-        <button class="tool" id="resetBtn">恢复默认</button>
         <a class="tool" href="/calendar/">日历</a>
         <a class="tool primary" href="/light-admin/">＋ 上传内容</a>
         <a class="tool" href="/">回主页</a>
         <button class="tool" id="backBtn">收起</button>
       </div>
     </header>
-    <div class="desk-wrap" id="deskWrap"><div class="desk" id="desk"></div></div>
+    <div class="paper-list" id="paperList"></div>
   </section>
 
   <div class="toast" id="toast" role="status" aria-live="polite"><span class="dot"></span><span id="toastText"></span></div>
@@ -378,12 +290,10 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
     { id:'g1', kind:'game', tag:'游戏', title:'塞尔达传说', sub:'王国之泪 · 60h', date:'2026-11-17', cover:'cover-b', desc:'爬到最高处滑翔的时候。', quote:'去玩吧，海拉鲁很大。', pin:true, x:240, y:570, rot:-1.5 }
   ] };
 
-  var desk = document.getElementById('desk');
-  var wrap = document.getElementById('deskWrap');
+  var paperList = document.getElementById('paperList');
   var introDeck = document.getElementById('introDeck');
   var toast = document.getElementById('toast');
   var toastText = document.getElementById('toastText');
-  var STORE = 'light-desk-v1';
   var DATA = [], byId = {};
 
   var toastTimer;
@@ -405,102 +315,79 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
       ? 'background-image:url("' + esc(cover.slice(4)) + '")' : '';
   }
 
-  function load() {
-    try {
-      var s = JSON.parse(localStorage.getItem(STORE) || '{}');
-      if (s && s.items) Object.keys(s.items).forEach(function (k) {
-        if (!byId[k]) return;
-        var v = s.items[k];
-        if (typeof v.x === 'number') byId[k].x = v.x;
-        if (typeof v.y === 'number') byId[k].y = v.y;
-        if (typeof v.rot === 'number') byId[k].rot = v.rot;
-        if (typeof v.pin === 'boolean') byId[k].pin = v.pin;
-      });
-    } catch (e) {}
-  }
-  function save() {
-    var items = {};
-    DATA.forEach(function (d) { items[d.id] = { x:d.x, y:d.y, rot:d.rot, pin:d.pin }; });
-    try { localStorage.setItem(STORE, JSON.stringify({ v:1, items:items })); } catch (e) {}
+  function sortItems(arr) {
+    return arr.slice().sort(function (a, b) { return String(b.date || '').localeCompare(String(a.date || '')); });
   }
 
-  function sizeOf(d) {
-    if (d.kind === 'photo') return [208, 156];
-    return [150, 222];
-  }
-  function faceHTML(d, cls) {
-    var cover = coverAttr(d.cover);
-    return '<div class="face paper-card ' + cls + ' ' + cover + '" style="position:relative;left:auto;top:auto;transform:none;' + coverStyle(d.cover) + '">' +
-      '<div class="pc-cover" style="' + coverStyle(d.cover) + '"></div>' +
-      '<div class="tag mono">' + esc(d.tag || d.kind) + '</div>' +
-      '<div class="pc-title">' + esc(d.title) + '<small>' + esc(d.sub || d.date || '') + '</small></div></div>';
-  }
-
-  /* 开始页：满桌散落的卡片 */
+  /* 开始页：俯视书桌，大小形状不一的物件散落 */
   var INTRO_POS = [
-    [2,4,-7,3],[15,-2,6,4],[29,9,-4,2],[42,2,8,5],[55,12,-6,3],[68,1,4,4],[80,14,-3,2],[91,3,7,5],
-    [6,38,5,6],[20,31,-8,7],[34,45,3,8],[48,33,-5,9],[62,47,6,10],[76,35,-4,11],[89,50,5,12],
-    [13,64,-3,13],[38,67,7,14],[64,64,-6,15],[84,68,4,16]
+    [30,17,-7,3],[44,20,6,4],[58,18,-4,2],[70,20,8,5],[38,32,-6,3],[52,33,4,4],
+    [64,33,-5,6],[33,45,5,7],[47,46,-7,8],[60,46,3,9],[40,59,-4,10],
+    [54,60,6,13],[30,72,-3,14],[46,73,7,15],[62,72,-5,16]
   ];
+  function introSize(d) {
+    if (d.kind === 'movie') return 'ic-poster';     // 电影海报，最大
+    if (d.kind === 'book') return 'ic-book';         // 书，小
+    if (d.kind === 'photo') return 'ic-landscape';   // 旅途照片，横版
+    return 'ic-game';                                // 游戏盒，中等
+  }
   function renderIntro() {
     var html = '';
-    DATA.slice(0, INTRO_POS.length).forEach(function (d, i) {
+    sortItems(DATA).slice(0, INTRO_POS.length).forEach(function (d, i) {
       var p = INTRO_POS[i];
-      var portrait = d.kind !== 'photo';
-      var kls = portrait ? 'ic-portrait' : 'ic-landscape';
+      var kls = introSize(d);
       var inner;
-      if (i === 5 || i === 13) {
+      if (i === 5 || i === 11) {
         inner = '<div class="ic-note"><div class="q">' + esc(d.quote || d.desc || '') + '</div><div class="meta mono">' +
           esc(d.date || '') + ' · ' + esc(d.title) + '</div></div>';
+        kls = 'ic-note-wrap';
       } else {
         inner = '<div class="pc-cover ' + coverAttr(d.cover) + '" style="' + coverStyle(d.cover) + '"></div>' +
           '<div class="pc-title">' + esc(d.title) + '<small>' + esc(d.sub || '') + '</small></div>';
       }
       html += '<div class="intro-card ' + kls + '" style="--l:' + p[0] + '%;--t:' + p[1] + '%;--rot:' + p[2] + 'deg;--z:' + p[3] + '">' +
-        (i === 3 || i === 11 ? '<div class="tape"></div>' : '') + inner + '</div>';
+        (i === 3 || i === 10 ? '<div class="tape"></div>' : '') + inner + '</div>';
     });
     introDeck.innerHTML = html;
   }
 
-  function cardHTML(d) {
-    var w = sizeOf(d)[0], h = sizeOf(d)[1];
-    var cls = d.kind === 'photo' ? 'pc-photo' : (d.kind === 'game' ? 'pc-movie' : (d.kind === 'book' ? 'pc-book' : 'pc-movie'));
-    return '<div class="card' + (d.pin ? ' pinned' : '') + '" data-id="' + esc(d.id) + '" data-kind="' + esc(d.kind) + '" tabindex="0" role="button" ' +
-      'aria-label="' + esc(d.title) + '，查看详情" style="width:' + w + 'px;height:' + h + 'px;--x:' + d.x + 'px;--y:' + d.y + 'px;--rot:' + d.rot + 'deg">' +
-      faceHTML(d, cls) + '<button class="pin" title="钉住 / 取消钉住" aria-label="钉住">' + (d.pin ? '★' : '☆') + '</button></div>';
+  function paperHTML(d) {
+    var land = d.kind === 'photo';
+    return '<article class="paper" data-id="' + esc(d.id) + '" data-kind="' + esc(d.kind) + '" tabindex="0" role="button" aria-label="' + esc(d.title) + '，查看详情">' +
+      '<div class="p-cover' + (land ? ' landscape' : '') + '">' +
+        '<div class="pc-cover ' + coverAttr(d.cover) + '" style="' + coverStyle(d.cover) + '"></div>' +
+        '<span class="kind">' + esc(d.tag || d.kind) + '</span>' +
+      '</div>' +
+      '<div class="p-body">' +
+        '<h3 class="p-title">' + esc(d.title) + '</h3>' +
+        '<div class="p-meta mono">' + esc(d.date || '') + (d.sub ? ' · ' + esc(d.sub) : '') + '</div>' +
+        '<p class="p-desc">' + esc(d.desc || '') + '</p>' +
+        (d.quote ? '<p class="p-quote">' + esc(d.quote) + '</p>' : '') +
+      '</div></article>';
   }
   function paint() {
-    desk.innerHTML = DATA.map(cardHTML).join('');
+    paperList.innerHTML = sortItems(DATA).map(paperHTML).join('');
     applyFilter();
-  }
-  function position(d) {
-    var el = desk.querySelector('[data-id="' + d.id + '"]');
-    if (el) { el.style.setProperty('--x', d.x + 'px'); el.style.setProperty('--y', d.y + 'px'); el.style.setProperty('--rot', d.rot + 'deg'); }
   }
 
   var current = 'all', query = '';
-  function applyFilter(scrollToCards) {
+  function applyFilter() {
     var shown = 0, q = query.trim().toLowerCase();
-    var minY = Infinity;
-    DATA.forEach(function (d) {
-      var el = desk.querySelector('[data-id="' + d.id + '"]');
-      if (!el) return;
+    Array.prototype.forEach.call(paperList.querySelectorAll('.paper'), function (el) {
+      var d = byId[el.dataset.id];
       var okKind = current === 'all' || d.kind === current;
       var okQuery = !q || (d.title + ' ' + d.sub + ' ' + d.desc).toLowerCase().indexOf(q) >= 0;
       var ok = okKind && okQuery;
       el.classList.toggle('filtered', !ok);
-      if (ok) { shown++; if (d.y < minY) minY = d.y; }
+      if (ok) shown++;
     });
-    if (scrollToCards && shown && isFinite(minY)) {
-      wrap.scrollTo({ top: Math.max(0, minY - 40), behavior: 'smooth' });
-    }
-    var old = desk.querySelector('.empty');
+    var old = paperList.querySelector('.empty');
     if (old) old.remove();
     if (!shown) {
       var e = document.createElement('div');
       e.className = 'empty';
       e.innerHTML = '这里还没有内容。<br>换个筛选，或者 <a href="/light-admin/">上传一条</a> 试试。';
-      desk.appendChild(e);
+      paperList.appendChild(e);
     }
   }
 
@@ -516,7 +403,7 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
     close.focus();
     function shut() {
       back.remove();
-      var el = desk.querySelector('[data-id="' + d.id + '"]');
+      var el = paperList.querySelector('[data-id="' + d.id + '"]');
       if (el) el.focus();
       document.removeEventListener('keydown', key);
     }
@@ -532,84 +419,23 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
     document.addEventListener('keydown', key);
   }
 
-  /* 拖拽：只改 transform，移动端长按也可触发 */
-  var drag = null;
-  desk.addEventListener('pointerdown', function (e) {
-    var card = e.target.closest('.card');
-    if (!card || e.target.closest('.pin')) return;
-    var d = byId[card.dataset.id];
-    drag = { el:card, d:d, sx:e.clientX, sy:e.clientY, ox:d.x, oy:d.y, moved:false, id:e.pointerId };
-    card.setPointerCapture(e.pointerId);
+  paperList.addEventListener('click', function (e) {
+    var paper = e.target.closest('.paper');
+    if (paper) openModal(byId[paper.dataset.id]);
   });
-  desk.addEventListener('pointermove', function (e) {
-    if (!drag || e.pointerId !== drag.id) return;
-    var dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
-    if (!drag.moved && Math.abs(dx) + Math.abs(dy) < 5) return;
-    if (!drag.moved) { drag.moved = true; drag.el.classList.add('dragging'); }
-    drag.d.x = Math.max(0, Math.round(drag.ox + dx));
-    drag.d.y = Math.max(0, Math.round(drag.oy + dy));
-    position(drag.d);
-  });
-  function endDrag(e) {
-    if (!drag || e.pointerId !== drag.id) return;
-    var d = drag.d, el = drag.el, moved = drag.moved;
-    el.classList.remove('dragging'); drag = null;
-    if (moved) { save(); say('位置已记下'); } else openModal(d);
-  }
-  desk.addEventListener('pointerup', endDrag);
-  desk.addEventListener('pointercancel', endDrag);
-
-  desk.addEventListener('click', function (e) {
-    var pin = e.target.closest('.pin');
-    if (!pin) return;
-    e.stopPropagation();
-    var d = byId[pin.closest('.card').dataset.id];
-    d.pin = !d.pin;
-    pin.closest('.card').classList.toggle('pinned', d.pin);
-    pin.textContent = d.pin ? '★' : '☆';
-    save(); say(d.pin ? '已钉在桌上' : '已取消钉住');
-  });
-  desk.addEventListener('keydown', function (e) {
-    var card = e.target.closest('.card');
-    if (!card) return;
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(byId[card.dataset.id]); }
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-      e.preventDefault();
-      var d = byId[card.dataset.id];
-      d.x = Math.max(0, d.x + (e.key === 'ArrowLeft' ? -12 : 12));
-      position(d); save();
-    }
+  paperList.addEventListener('keydown', function (e) {
+    var paper = e.target.closest('.paper');
+    if (paper && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openModal(byId[paper.dataset.id]); }
   });
 
   document.querySelectorAll('.tab').forEach(function (tab) {
     tab.addEventListener('click', function () {
       current = tab.dataset.kind;
       document.querySelectorAll('.tab').forEach(function (t) { t.setAttribute('aria-selected', String(t === tab)); });
-      applyFilter(true);
+      applyFilter();
     });
   });
   document.getElementById('search').addEventListener('input', function (e) { query = e.target.value; applyFilter(); });
-  document.getElementById('tidyBtn').addEventListener('click', function () {
-    var count = { book:0, movie:0, photo:0, game:0 };
-    var colW = { book:174, movie:174, photo:232, game:174 };
-    var rowH = { book:246, movie:246, photo:180, game:246 };
-    DATA.forEach(function (d) {
-      var k = d.kind in count ? d.kind : 'book';
-      d.x = 40 + count[k] * colW[k];
-      d.y = k === 'photo' ? 600 + Math.floor(count[k] / 5) * rowH[k] : 36 + Math.floor(count[k] / 6) * rowH[k];
-      d.rot = 0; count[k]++; position(d);
-    });
-    wrap.classList.add('grid-on'); save(); say('桌面已整理');
-    setTimeout(function () { wrap.classList.remove('grid-on'); }, 900);
-  });
-  document.getElementById('resetBtn').addEventListener('click', function () {
-    try { localStorage.removeItem(STORE); } catch (e) {}
-    fetch('/assets/data/light.json?ts=' + Date.now()).then(function (r) { return r.json(); }).then(function (j) {
-      var fresh = {}; (j.items || FALLBACK.items).forEach(function (x) { fresh[x.id] = x; });
-      DATA.forEach(function (d) { if (fresh[d.id]) { d.x = fresh[d.id].x; d.y = fresh[d.id].y; d.rot = fresh[d.id].rot; position(d); } });
-      say('已恢复默认布局');
-    }).catch(function () { say('恢复失败，请稍后再试'); });
-  });
   document.getElementById('enterBtn').addEventListener('click', function () {
     document.getElementById('intro').classList.add('hidden');
     document.getElementById('studio').classList.remove('hidden');
@@ -619,15 +445,11 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
     document.getElementById('studio').classList.add('hidden');
     document.getElementById('intro').classList.remove('hidden');
   });
-  document.getElementById('weatherBtn').addEventListener('click', function () {
-    var on = intro.classList.toggle('rainy');
-    this.textContent = on ? '☂ 雨天 · 点我换天气' : '☀ 晴天 · 点我换天气';
-  });
 
   function boot(j) {
     DATA = (j && j.items) || FALLBACK.items;
     byId = {}; DATA.forEach(function (d) { byId[d.id] = d; });
-    load(); renderIntro(); paint();
+    renderIntro(); paint();
     // 从日历跳转：?item=id 直接打开对应详情
     var id = new URLSearchParams(location.search).get('item');
     if (id && byId[id]) {
