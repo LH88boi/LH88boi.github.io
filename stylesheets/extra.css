@@ -1,3 +1,17 @@
+/* 全站暖纸白基底（所有页面默认背景） */
+:root,
+[data-md-color-scheme="default"] {
+  --md-default-bg-color: #FCFAF8;
+  --md-default-bg-color--lighter: #FFFDFB;
+  --md-default-bg-color--lightest: #FFFFFF;
+  --md-default-fg-color: #1F1B18;
+  --md-default-fg-color--light: #5C534B;
+  --md-default-fg-color--lighter: #8A7F75;
+  --md-default-fg-color--lightest: #B9AFA5;
+  --md-divider-color: rgba(138, 127, 117, .25);
+}
+body { background-color: var(--md-default-bg-color) !important; }
+
 /* 天网日记：正文深灰、文章间灰色横线、标题链接保持标题样式 */
 
 /* 1) 日记正文（列表卡片 + 文章页）文字：深一点的灰色 */
