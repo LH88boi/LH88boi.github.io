@@ -53,6 +53,8 @@
   .preview h2{font-size:19px;margin:20px 0 8px}
   .preview blockquote{border-left:4px solid var(--brand);margin:12px 0;padding:6px 14px;background:#f5f6ff;color:#3949ab}
   .preview code{background:#f3f4f6;padding:1px 5px;border-radius:4px}
+  .preview img{max-width:100%;height:auto;border-radius:8px;display:block;margin:10px 0}
+  #imageBtn{white-space:nowrap}
   .bar{display:flex;gap:10px;align-items:center;margin-top:20px;flex-wrap:wrap}
   .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.5);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:6px}
   @keyframes spin{to{transform:rotate(360deg)}}
@@ -130,7 +132,12 @@
         <input id="fTags" placeholder="日记, 随笔">
       </div>
       <div class="field">
-        <label>正文（支持 Markdown）</label>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;gap:12px">
+          <label for="body" style="margin:0">正文（支持 Markdown）</label>
+          <button type="button" class="btn ghost sm" id="imageBtn" onclick="$('imageInput').click()">＋ 插入图片</button>
+          <input id="imageInput" type="file" accept="image/*" class="hidden" onchange="pickImage(this)">
+        </div>
+        <div class="hint" style="margin-top:-2px;margin-bottom:8px">点「插入图片」选本地图片，或直接 Ctrl + V 粘贴截图，会自动上传并插入正文。</div>
         <div class="editor-grid">
           <textarea id="body" placeholder="## 今天做了什么&#10;&#10;在这里写正文……" oninput="renderPreview()"></textarea>
           <div>
@@ -199,6 +206,55 @@ function fromB64(b64){
 function today(){
   const d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+/* ---------- 图片上传 ---------- */
+const IMG_DIR = 'docs/assets/images';
+const IMG_URL = '/assets/images/';
+
+function pickImage(input){
+  const file = input.files && input.files[0];
+  input.value = '';
+  if(file) uploadImageFile(file, file.name);
+}
+function insertAtCursor(text){
+  const el = $('body');
+  const s = el.selectionStart, e = el.selectionEnd;
+  el.value = el.value.slice(0, s) + text + el.value.slice(e);
+  el.focus();
+  el.selectionStart = el.selectionEnd = s + text.length;
+  renderPreview();
+}
+async function uploadImageFile(file, originName){
+  if(!file.type || file.type.indexOf('image/') !== 0){ msg('请选择图片文件。','err'); return; }
+  if(file.size > 15 * 1024 * 1024){ msg('图片超过 15MB，请先压缩再上传。','err'); return; }
+  const btn = $('imageBtn');
+  btn.disabled = true; btn.textContent = '上传中…';
+  msg('<span class="spinner" style="border-color:#3949ab;border-top-color:transparent"></span>正在上传图片…');
+  try{
+    const dataUrl = await new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.onerror = () => reject(new Error('读取图片失败'));
+      r.readAsDataURL(file);
+    });
+    const b64 = dataUrl.split(',')[1];
+    let ext = (originName.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    if(!ext) ext = (file.type.split('/')[1] || 'png').replace('jpeg', 'jpg');
+    const name = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
+    await gh(`/repos/${OWNER}/${REPO}/contents/${IMG_DIR}/${name}`, {
+      method: 'PUT',
+      body: { message: '上传图片：' + name, content: b64, branch: BRANCH }
+    });
+    const alt = originName.replace(/[\[\]]/g, '');
+    insertAtCursor(`![${alt}](${IMG_URL}${name})`);
+    msg('图片已上传并插入正文。保存日记后即可在网站显示。','ok');
+    $('body').scrollIntoView({behavior:'smooth', block:'center'});
+  }catch(e){
+    msg('图片上传失败：' + e.message,'err');
+  }finally{
+    btn.disabled = false; btn.textContent = '＋ 插入图片';
+  }
 }
 
 async function doLogin(){
@@ -403,10 +459,23 @@ async function delPost(encName){
 
 function backToList(){ show('editorView',false); show('listView',true); msg(''); }
 
+$('body').addEventListener('paste', function(e){
+  const items = e.clipboardData && e.clipboardData.items;
+  if(!items) return;
+  for(const it of items){
+    if(it.type && it.type.indexOf('image/') === 0){
+      const f = it.getAsFile();
+      if(f){ e.preventDefault(); uploadImageFile(f, 'pasted-' + today() + '.png'); }
+      break;
+    }
+  }
+});
+
 function renderPreview(){
   let s = $('body').value || '';
   s = esc(s);
-  s = s.replace(/^###\s+(.+)$/gm,'<h3>$1</h3>')
+  s = s.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img alt="$1" src="$2">')
+       .replace(/^###\s+(.+)$/gm,'<h3>$1</h3>')
        .replace(/^##\s+(.+)$/gm,'<h2>$1</h2>')
        .replace(/^#\s+(.+)$/gm,'<h1>$1</h1>')
        .replace(/^&gt;\s?(.+)$/gm,'<blockquote>$1</blockquote>')
