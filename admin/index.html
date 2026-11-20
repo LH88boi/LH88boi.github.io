@@ -137,7 +137,7 @@
           <button type="button" class="btn ghost sm" id="imageBtn" onclick="$('imageInput').click()">＋ 插入图片</button>
           <input id="imageInput" type="file" accept="image/*" class="hidden" onchange="pickImage(this)">
         </div>
-        <div class="hint" style="margin-top:-2px;margin-bottom:8px">点「插入图片」选本地图片，或直接 Ctrl + V 粘贴截图，会自动上传并插入正文。</div>
+        <div class="hint" style="margin-top:-2px;margin-bottom:8px">点「插入图片」选本地图片，或直接 Ctrl + V 粘贴截图。会自动压缩成 WebP（最长边 1920px）再上传，正文立即插入链接。</div>
         <div class="editor-grid">
           <textarea id="body" placeholder="## 今天做了什么&#10;&#10;在这里写正文……" oninput="renderPreview()"></textarea>
           <div>
@@ -225,6 +225,26 @@ function insertAtCursor(text){
   el.selectionStart = el.selectionEnd = s + text.length;
   renderPreview();
 }
+/* 浏览器端压缩：最长边 1920px，转 WebP 质量 0.82。失败则退回原图 */
+function compressImage(dataUrl){
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      try{
+        const MAX = 1920;
+        const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+        const c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(img.width * scale));
+        c.height = Math.max(1, Math.round(img.height * scale));
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        const out = c.toDataURL('image/webp', 0.82);
+        resolve(out.indexOf('data:image/webp') === 0 ? out : dataUrl);
+      }catch(e){ resolve(dataUrl); }
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+}
 async function uploadImageFile(file, originName){
   if(!file.type || file.type.indexOf('image/') !== 0){ msg('请选择图片文件。','err'); return; }
   if(file.size > 15 * 1024 * 1024){ msg('图片超过 15MB，请先压缩再上传。','err'); return; }
@@ -238,9 +258,10 @@ async function uploadImageFile(file, originName){
       r.onerror = () => reject(new Error('读取图片失败'));
       r.readAsDataURL(file);
     });
-    const b64 = dataUrl.split(',')[1];
-    let ext = (originName.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    if(!ext) ext = (file.type.split('/')[1] || 'png').replace('jpeg', 'jpg');
+    const finalDataUrl = await compressImage(dataUrl);
+    const b64 = finalDataUrl.split(',')[1];
+    const ext = finalDataUrl.indexOf('data:image/webp') === 0 ? 'webp'
+      : (originName.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '') || 'png';
     const name = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
     await gh(`/repos/${OWNER}/${REPO}/contents/${IMG_DIR}/${name}`, {
       method: 'PUT',
